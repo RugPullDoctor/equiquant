@@ -1,15 +1,16 @@
 """
 EquiQuant AI — FastAPI Backend
-Racing data scraper, feature engineering, and model API
+Railway-compatible with auto startup data loading
 """
 
-from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
-import asyncio
 import logging
+import os
 from datetime import datetime
+from pathlib import Path
 
 from routers import races, scraper, model, kelly
 from scheduler import start_scheduler
@@ -22,13 +23,21 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("EquiQuant AI starting up...")
     await start_scheduler()
+
+    # Auto-load race data if database is empty
+    try:
+        from startup import startup_load
+        await startup_load()
+    except Exception as e:
+        logger.warning(f"Startup data load skipped: {e}")
+
     yield
     logger.info("EquiQuant AI shutting down.")
 
 
 app = FastAPI(
     title="EquiQuant AI",
-    description="Benter-style horse racing analytics API — Santa Anita Park",
+    description="Benter-style horse racing analytics — Santa Anita Park",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -41,15 +50,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(races.router, prefix="/api/races", tags=["Races"])
+app.include_router(races.router,   prefix="/api/races",   tags=["Races"])
 app.include_router(scraper.router, prefix="/api/scraper", tags=["Scraper"])
-app.include_router(model.router, prefix="/api/model", tags=["Model"])
-app.include_router(kelly.router, prefix="/api/kelly", tags=["Kelly"])
-
-# Serve the frontend dashboard
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+app.include_router(model.router,   prefix="/api/model",   tags=["Model"])
+app.include_router(kelly.router,   prefix="/api/kelly",   tags=["Kelly"])
 
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "timestamp": datetime.utcnow().isoformat(), "version": "1.0.0"}
+    return {
+        "status": "ok",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0",
+        "environment": os.getenv("RAILWAY_ENVIRONMENT", "local"),
+    }
+
+
+# Serve frontend
+frontend_path = Path(__file__).parent / "frontend"
+if frontend_path.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+else:
+    logger.warning("Frontend folder not found — API-only mode")
