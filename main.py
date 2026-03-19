@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from routers import races, scraper, model, kelly
+from routers import races, scraper, model, kelly, admin
 from scheduler import start_scheduler
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -24,7 +24,6 @@ async def lifespan(app: FastAPI):
     logger.info("EquiQuant AI starting up...")
     await start_scheduler()
 
-    # Auto-load race data if database is empty
     try:
         from startup import startup_load
         await startup_load()
@@ -54,6 +53,7 @@ app.include_router(races.router,   prefix="/api/races",   tags=["Races"])
 app.include_router(scraper.router, prefix="/api/scraper", tags=["Scraper"])
 app.include_router(model.router,   prefix="/api/model",   tags=["Model"])
 app.include_router(kelly.router,   prefix="/api/kelly",   tags=["Kelly"])
+app.include_router(admin.router,   prefix="/api/admin",   tags=["Admin"])
 
 
 @app.get("/api/health")
