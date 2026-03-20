@@ -12,3 +12,4 @@ pandas
 python-dotenv
 lxml
 requests
+pytz
