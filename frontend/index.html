@@ -6,80 +6,77 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>EquiQuant AI</title>
 <style>
-/* ── TOKENS ───────────────────────────────────────────────── */
 :root{
-  --gold:#C9A84C;--gold-light:#E8C97A;--gold-dim:#8A6C2A;
-  --green:#1A7C4F;--green-light:#2DB870;
-  --red:#C0392B;--red-light:#E74C3C;
+  --gold:#C9A84C;--gold-dim:#8A6C2A;
+  --green-light:#2DB870;--red-light:#E74C3C;
   --bg:#0A0C0F;--bg2:#111419;--bg3:#181C23;--bg4:#1E232D;
   --border:rgba(201,168,76,0.15);--border2:rgba(201,168,76,0.08);
   --text:#E8E6DF;--text2:#9A9589;--text3:#5A5650;
-  --blue:#3B82F6;--blue-light:#60A5FA;
+  --blue:#3B82F6;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;height:100vh}
 
-/* ── SHARED COMPONENTS ───────────────────────────────────── */
-.panel{display:none}.panel.active{display:block}
+/* ── SHARED ─────────────────────────────────────────────── */
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .empty{text-align:center;padding:40px 16px;color:var(--text3)}
 .btn{background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);color:var(--gold);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:500;transition:all .15s}
-.btn:hover{background:rgba(201,168,76,.18)}.btn:active{transform:scale(.97)}
+.btn:hover{background:rgba(201,168,76,.2)}.btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-green{background:rgba(26,124,79,.15);border-color:rgba(45,184,112,.3);color:var(--green-light)}
 .btn-green:hover{background:rgba(26,124,79,.25)}
 .btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
 .section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .section-title{font-size:16px;font-weight:600}
+.panel{display:none}.panel.active{display:block}
 
 /* RACE CARDS */
 .race-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:12px}
-.race-hd{background:var(--bg3);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.race-hd{background:var(--bg3);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .race-num{width:30px;height:30px;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0}
-.race-meta-wrap{margin-left:10px;flex:1}
+.race-info-wrap{flex:1;min-width:0}
 .race-name{font-size:13px;font-weight:600}
 .race-meta{font-size:11px;color:var(--text2);margin-top:1px}
-.race-time{font-size:12px;color:var(--gold);background:rgba(201,168,76,.08);border:1px solid var(--border);padding:3px 9px;border-radius:6px;white-space:nowrap}
-
-/* HORSE ROWS */
+.race-time{font-size:12px;color:var(--gold);background:rgba(201,168,76,.08);border:1px solid var(--border);padding:3px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0}
 .horse-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border2)}
 .horse-row:last-child{border-bottom:none}
 .horse-row:hover{background:rgba(255,255,255,.02)}
 .horse-row.bet-row{background:rgba(26,124,79,.07)}
 .horse-row.bet-row:hover{background:rgba(26,124,79,.12)}
 .horse-row.scr{opacity:.35}
-.pp-circle{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text2);flex-shrink:0}
-.pp-circle.bet{border-color:var(--green-light);color:var(--green-light)}
-.horse-main{flex:1;min-width:0}
-.horse-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.horse-nm{font-size:13px;font-weight:600}
-.horse-jt{font-size:11px;color:var(--text2);margin-top:2px}
+.pp-c{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--text2);flex-shrink:0}
+.pp-c.bet{border-color:var(--green-light);color:var(--green-light)}
+.h-main{flex:1;min-width:0}
+.h-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.h-nm{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h-jt{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bet-pill{background:rgba(26,124,79,.2);border:1px solid rgba(45,184,112,.35);border-radius:20px;padding:1px 7px;font-size:9px;color:var(--green-light);font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
-.prob-row{display:flex;align-items:center;gap:6px;margin-top:4px}
-.prob-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;min-width:40px;flex:1}
-.prob-fill{height:100%;border-radius:2px}
-.prob-fill.model{background:var(--gold)}
-.prob-fill.model-bet{background:var(--green-light)}
-.prob-fill.track{background:var(--blue);opacity:.65}
-.prob-val{font-size:11px;min-width:34px;text-align:right;color:var(--text2);font-variant-numeric:tabular-nums}
-.kelly-val{font-size:13px;font-weight:600;color:var(--green-light);margin-top:3px;white-space:nowrap}
+.prob-row{display:flex;align-items:center;gap:5px;margin-top:4px}
+.pbar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;flex:1;min-width:30px}
+.pfill{height:100%;border-radius:2px}
+.pfill.m{background:var(--gold)}.pfill.mb{background:var(--green-light)}.pfill.t{background:var(--blue);opacity:.65}
+.pval{font-size:11px;min-width:32px;text-align:right;color:var(--text2);font-variant-numeric:tabular-nums}
 .edge-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
-.edge-bet{background:rgba(26,124,79,.25);color:#4AE08A;border:1px solid rgba(45,184,112,.5);box-shadow:0 0 6px rgba(45,184,112,.15)}
-.edge-pos{background:rgba(26,124,79,.1);color:var(--green-light);border:1px solid rgba(45,184,112,.2)}
-.edge-neg{background:rgba(192,57,43,.12);color:var(--red-light);border:1px solid rgba(231,76,60,.15)}
-.edge-zero{background:rgba(90,86,80,.15);color:var(--text3);border:1px solid var(--border2)}
+.eb{background:rgba(26,124,79,.25);color:#4AE08A;border:1px solid rgba(45,184,112,.5)}
+.ep{background:rgba(26,124,79,.1);color:var(--green-light);border:1px solid rgba(45,184,112,.2)}
+.en{background:rgba(192,57,43,.12);color:var(--red-light);border:1px solid rgba(231,76,60,.15)}
+.ez{background:rgba(90,86,80,.15);color:var(--text3);border:1px solid var(--border2)}
+.kv{font-size:13px;font-weight:600;color:var(--green-light);margin-top:3px;white-space:nowrap}
+
+/* STAT CARDS */
+.stat-card{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:14px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gold);opacity:.6}
+.stat-card.green::before{background:var(--green-light)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:7px}
+.stat-value{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.stat-sub{font-size:11px;margin-top:3px;color:var(--text3)}
+.stat-sub.up{color:var(--green-light)}
 
 /* KELLY */
 .kelly-hero{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
-.kelly-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
-.k-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.k-stat-val{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
-.slider-row{display:flex;align-items:center;gap:10px}
-.slider-label{font-size:12px;color:var(--text2);white-space:nowrap}
-input[type=range]{flex:1;accent-color:var(--gold)}
-.slider-out{font-size:14px;font-weight:600;color:var(--gold);min-width:36px;text-align:right;font-variant-numeric:tabular-nums}
 .kbet-card{background:var(--bg2);border:1px solid rgba(45,184,112,.22);border-radius:12px;padding:14px;margin-bottom:10px}
 .kbet-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
 .kbet-horse{font-size:15px;font-weight:600}
@@ -89,247 +86,206 @@ input[type=range]{flex:1;accent-color:var(--gold)}
 .kbet-stat{font-size:11px;color:var(--text2)}
 .kbet-stat span{color:var(--text);font-weight:500}
 .conf-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600}
-.conf-HIGH{background:rgba(26,124,79,.2);color:var(--green-light)}
-.conf-MEDIUM{background:rgba(201,168,76,.15);color:var(--gold)}
-.conf-LOW{background:rgba(90,86,80,.2);color:var(--text2)}
+.cH{background:rgba(26,124,79,.2);color:var(--green-light)}
+.cM{background:rgba(201,168,76,.15);color:var(--gold)}
+.cL{background:rgba(90,86,80,.2);color:var(--text2)}
+input[type=range]{flex:1;accent-color:var(--gold)}
 
 /* AGENTS */
 .agent-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:12px}
 .agent-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .agent-title{font-size:14px;font-weight:600}
-.status-ok{font-size:11px;padding:3px 8px;border-radius:4px;background:rgba(26,124,79,.15);color:var(--green-light)}
 .agent-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border2);font-size:12px}
 .agent-row:last-child{border-bottom:none}
 .agent-key{color:var(--text2)}
-.log-box{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px;height:200px;overflow-y:auto;font-family:'SF Mono','Fira Code',monospace;font-size:11px;line-height:1.7;-webkit-overflow-scrolling:touch}
-.log-ok{color:var(--green-light)}.log-warn{color:var(--gold)}.log-err{color:var(--red-light)}.log-info{color:var(--blue-light)}
+.log-box{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:10px;height:200px;overflow-y:auto;font-family:'SF Mono','Fira Code',monospace;font-size:11px;line-height:1.7}
+.lok{color:var(--green-light)}.lw{color:var(--gold)}.le{color:var(--red-light)}.li{color:#60A5FA}
 
 /* API PILL */
 .api-pill{display:flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:20px}
-.api-ok{background:rgba(26,124,79,.15);color:var(--green-light)}
-.api-err{background:rgba(192,57,43,.15);color:var(--red-light)}
-.api-loading{background:rgba(201,168,76,.12);color:var(--gold)}
+.aok{background:rgba(26,124,79,.15);color:var(--green-light)}
+.aerr{background:rgba(192,57,43,.15);color:var(--red-light)}
+.aload{background:rgba(201,168,76,.12);color:var(--gold)}
 .api-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 1.2s infinite}
 
 
-/* ════════════════════════════════════════════════════════════
-   DESKTOP LAYOUT  (≥ 768px)
-   Full sidebar + top header + tab content
-════════════════════════════════════════════════════════════ */
-@media (min-width: 768px) {
-  body{overflow:hidden}
-  .app{display:grid;grid-template-rows:60px 1fr;grid-template-columns:220px 1fr;height:100vh}
-  .desktop-header{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
-  .logo{display:flex;align-items:center;gap:12px}
-  .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-  .logo-text{font-size:20px;font-weight:700;color:var(--gold);letter-spacing:-.3px}
-  .logo-sub{font-size:10px;color:var(--text2);letter-spacing:2px;text-transform:uppercase}
-  .header-right{display:flex;align-items:center;gap:12px}
-  .clock{font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums}
+/* ════════════════════════════════════════
+   DESKTOP  ≥ 768px
+════════════════════════════════════════ */
+.mobile-shell{display:none}
+@media(min-width:768px){
+  .mobile-shell{display:none!important}
+  .desktop-shell{display:grid;grid-template-rows:60px 1fr;grid-template-columns:220px 1fr;height:100vh}
 
-  .desktop-sidebar{background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;padding:20px 0}
-  .bankroll-card{margin:0 14px 20px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px}
-  .br-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
-  .br-value{font-size:20px;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
-  .br-sub{font-size:11px;color:var(--green-light);margin-top:3px}
-  .nav-section{margin-bottom:20px}
-  .nav-label{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:0 18px;margin-bottom:6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:13px;color:var(--text2)}
-  .nav-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
-  .nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,168,76,.06);font-weight:500}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0}
-  .nav-badge{background:var(--green-light);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:auto}
+  .d-header{grid-column:1/-1;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+  .d-logo{display:flex;align-items:center;gap:12px}
+  .d-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .d-logo-text{font-size:20px;font-weight:700;color:var(--gold)}
+  .d-logo-sub{font-size:10px;color:var(--text2);letter-spacing:2px;text-transform:uppercase}
+  .d-header-r{display:flex;align-items:center;gap:12px}
+  .d-clock{font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums}
 
-  .desktop-main{overflow:hidden;display:flex;flex-direction:column}
-  .desktop-tabs{background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;padding:0 24px;flex-shrink:0}
-  .tab-btn{padding:14px 20px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none}
-  .tab-btn:hover{color:var(--text)}
-  .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:500}
-  .desktop-content{flex:1;overflow-y:auto;padding:24px}
+  .d-sidebar{background:var(--bg2);border-right:1px solid var(--border2);display:flex;flex-direction:column;padding:20px 0;overflow-y:auto}
+  .d-br-card{margin:0 14px 20px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px}
+  .d-br-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+  .d-br-val{font-size:20px;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
+  .d-br-sub{font-size:11px;color:var(--green-light);margin-top:3px}
+  .d-nav-label{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:0 18px;margin-bottom:6px;margin-top:16px}
+  .d-nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;font-size:13px;color:var(--text2)}
+  .d-nav-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+  .d-nav-item.active{color:var(--gold);border-left-color:var(--gold);background:rgba(201,168,76,.06);font-weight:500}
+  .d-nav-item svg{width:16px;height:16px;flex-shrink:0}
+  .d-nav-badge{background:var(--green-light);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:auto}
+  .d-feed-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;display:inline-block}
 
-  /* desktop stat grid 4-col */
-  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-  .stat-card{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:16px;position:relative;overflow:hidden}
-  .stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gold);opacity:.6}
-  .stat-card.green::before{background:var(--green-light)}
-  .stat-card.blue::before{background:var(--blue-light)}
-  .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px}
-  .stat-value{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
-  .stat-sub{font-size:11px;margin-top:4px;color:var(--text3)}
-  .stat-sub.up{color:var(--green-light)}
+  .d-main{overflow:hidden;display:flex;flex-direction:column}
+  .d-tabs{background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;padding:0 24px;flex-shrink:0}
+  .d-tab{padding:14px 20px;font-size:13px;cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;color:var(--text2);transition:all .15s;white-space:nowrap}
+  .d-tab:hover{color:var(--text)}
+  .d-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:500}
+  .d-content{flex:1;overflow-y:auto;padding:24px}
 
-  /* desktop kelly stats 4-col */
-  .kelly-stats-grid{grid-template-columns:repeat(4,1fr)}
-
-  /* desktop horse table layout */
-  .horse-nm{max-width:none}
-  .horse-row{padding:10px 16px}
-  .horse-row .prob-bar{min-width:60px}
-
-  /* hide mobile elements */
-  .mobile-header,.bottom-nav{display:none}
+  .d-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .d-kelly-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .h-nm{max-width:none}
 }
 
 
-/* ════════════════════════════════════════════════════════════
-   MOBILE LAYOUT  (< 768px)
-   Full-screen with bottom nav + scrollable content
-════════════════════════════════════════════════════════════ */
-@media (max-width: 767px) {
-  .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
-  .mobile-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-  .mobile-logo{display:flex;align-items:center;gap:10px}
+/* ════════════════════════════════════════
+   MOBILE  < 768px
+════════════════════════════════════════ */
+.desktop-shell{display:none}
+@media(max-width:767px){
+  .desktop-shell{display:none!important}
+  .mobile-shell{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+  .m-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .m-logo{display:flex;align-items:center;gap:10px}
   .m-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
   .m-logo-text{font-size:16px;font-weight:700;color:var(--gold)}
   .m-logo-sub{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
 
-  .mobile-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px;padding-bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+  .m-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:14px;padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
 
-  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border2);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100}
-  .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:10px;transition:color .15s;position:relative}
-  .bnav-btn.active{color:var(--gold)}
-  .bnav-btn svg{width:22px;height:22px}
-  .bnav-badge{background:var(--green-light);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;position:absolute;top:5px;right:calc(50% - 18px)}
+  .m-bnav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border2);display:flex;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100}
+  .m-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:10px;transition:color .15s;position:relative}
+  .m-nav-btn.active{color:var(--gold)}
+  .m-nav-btn svg{width:22px;height:22px}
+  .m-badge{background:var(--green-light);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;position:absolute;top:5px;right:calc(50% - 20px)}
 
-  /* mobile stat grid 2-col */
-  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-  .stat-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:12px;position:relative;overflow:hidden}
-  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);opacity:.5}
-  .stat-card.green::before{background:var(--green-light)}
-  .stat-card.blue::before{background:var(--blue-light)}
-  .stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
-  .stat-value{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
-  .stat-sub{font-size:10px;margin-top:3px;color:var(--text3)}
-  .stat-sub.up{color:var(--green-light)}
-
-  /* mobile kelly stats 2-col */
-  .kelly-stats-grid{grid-template-columns:1fr 1fr}
-
-  /* mobile horse rows compact */
-  .horse-nm{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-  /* hide desktop elements */
-  .desktop-header,.desktop-sidebar,.desktop-tabs{display:none}
-  .desktop-content{display:none}
+  .m-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .m-kelly-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .h-nm{max-width:130px}
 }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- ══ DESKTOP HEADER ════════════════════════════════════ -->
-  <div class="desktop-header">
-    <div class="logo">
-      <div class="logo-icon">🏇</div>
+<!-- ══════════════════════════════════════
+     DESKTOP SHELL
+══════════════════════════════════════ -->
+<div class="desktop-shell">
+  <div class="d-header">
+    <div class="d-logo">
+      <div class="d-logo-icon">🏇</div>
       <div>
-        <div class="logo-text">EquiQuant AI</div>
-        <div class="logo-sub">Santa Anita Racing Intelligence</div>
+        <div class="d-logo-text">EquiQuant AI</div>
+        <div class="d-logo-sub">Santa Anita Racing Intelligence</div>
       </div>
     </div>
-    <div class="header-right">
-      <div class="clock" id="d-clock"></div>
-      <div class="api-pill api-loading" id="d-api-pill">
-        <div class="api-dot"></div>
-        <span id="d-api-txt">Connecting</span>
-      </div>
+    <div class="d-header-r">
+      <div class="d-clock" id="d-clock"></div>
+      <div class="api-pill aload" id="d-api"><div class="api-dot"></div><span id="d-api-txt">Connecting</span></div>
     </div>
   </div>
 
-  <!-- ══ DESKTOP SIDEBAR ═══════════════════════════════════ -->
-  <div class="desktop-sidebar">
-    <div class="bankroll-card">
-      <div class="br-label">Bankroll</div>
-      <div class="br-value">$1,000</div>
-      <div class="br-sub">50% Kelly · 3.5% min edge</div>
+  <div class="d-sidebar">
+    <div class="d-br-card">
+      <div class="d-br-label">Bankroll</div>
+      <div class="d-br-val">$1,000</div>
+      <div class="d-br-sub">50% Kelly · 3.5% min edge</div>
     </div>
-    <div class="nav-section">
-      <div class="nav-label">Platform</div>
-      <div class="nav-item active" onclick="switchTab('overview',this,'d')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        Dashboard
-      </div>
-      <div class="nav-item" onclick="switchTab('races',this,'d')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Race Cards
-      </div>
-      <div class="nav-item" onclick="switchTab('kelly',this,'d')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
-        Kelly Bets
-        <span class="nav-badge" id="d-kelly-badge" style="display:none">0</span>
-      </div>
-      <div class="nav-item" onclick="switchTab('agents',this,'d')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M3 20c0-4 4-7 9-7s9 3 9 7"/></svg>
-        AI Agents
-      </div>
+    <div class="d-nav-label">Platform</div>
+    <div class="d-nav-item active" onclick="dt('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Dashboard
     </div>
-    <div class="nav-section">
-      <div class="nav-label">Data Feeds</div>
-      <div class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
-        Equibase <span style="margin-left:auto;width:6px;height:6px;background:var(--gold);border-radius:50%;display:inline-block"></span>
-      </div>
-      <div class="nav-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
-        Santa Anita <span id="d-sa-dot" style="margin-left:auto;width:6px;height:6px;background:var(--text3);border-radius:50%;display:inline-block"></span>
-      </div>
+    <div class="d-nav-item" onclick="dt('races',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Race Cards
+    </div>
+    <div class="d-nav-item" onclick="dt('kelly',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+      Kelly Bets
+      <span class="d-nav-badge" id="d-kbadge" style="display:none">0</span>
+    </div>
+    <div class="d-nav-item" onclick="dt('agents',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M3 20c0-4 4-7 9-7s9 3 9 7"/></svg>
+      AI Agents
+    </div>
+    <div class="d-nav-label">Data Feeds</div>
+    <div class="d-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+      Equibase <span class="d-feed-dot" style="background:var(--gold)"></span>
+    </div>
+    <div class="d-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+      Santa Anita <span class="d-feed-dot" id="d-sa-dot" style="background:var(--text3)"></span>
     </div>
   </div>
 
-  <!-- ══ DESKTOP MAIN ═══════════════════════════════════════ -->
-  <div class="desktop-main">
-    <div class="desktop-tabs">
-      <button class="tab-btn active" onclick="switchTab('overview',this,'dt')">Overview</button>
-      <button class="tab-btn" onclick="switchTab('races',this,'dt')">Today's Races</button>
-      <button class="tab-btn" onclick="switchTab('kelly',this,'dt')">Kelly Engine</button>
-      <button class="tab-btn" onclick="switchTab('agents',this,'dt')">AI Agents</button>
+  <div class="d-main">
+    <div class="d-tabs">
+      <button class="d-tab active" onclick="dt('overview',this)">Overview</button>
+      <button class="d-tab" onclick="dt('races',this)">Today's Races</button>
+      <button class="d-tab" onclick="dt('kelly',this)">Kelly Engine</button>
+      <button class="d-tab" onclick="dt('agents',this)">AI Agents</button>
     </div>
-    <div class="desktop-content" id="d-content">
-      <div id="d-tab-overview" class="panel active"><div id="d-overview-inner"></div></div>
-      <div id="d-tab-races"    class="panel"><div id="d-races-inner"></div></div>
-      <div id="d-tab-kelly"    class="panel"><div id="d-kelly-inner"></div></div>
-      <div id="d-tab-agents"   class="panel"><div id="d-agents-inner"></div></div>
+    <div class="d-content" id="d-content">
+      <div id="d-overview" class="panel active"></div>
+      <div id="d-races"    class="panel"></div>
+      <div id="d-kelly"    class="panel"></div>
+      <div id="d-agents"   class="panel"></div>
     </div>
   </div>
+</div>
 
-  <!-- ══ MOBILE HEADER ════════════════════════════════════= -->
-  <div class="mobile-header">
-    <div class="mobile-logo">
+
+<!-- ══════════════════════════════════════
+     MOBILE SHELL
+══════════════════════════════════════ -->
+<div class="mobile-shell">
+  <div class="m-header">
+    <div class="m-logo">
       <div class="m-logo-icon">🏇</div>
       <div>
         <div class="m-logo-text">EquiQuant AI</div>
         <div class="m-logo-sub">Santa Anita</div>
       </div>
     </div>
-    <div class="api-pill api-loading" id="m-api-pill">
-      <div class="api-dot"></div>
-      <span id="m-api-txt">Connecting</span>
-    </div>
+    <div class="api-pill aload" id="m-api"><div class="api-dot"></div><span id="m-api-txt">Connecting</span></div>
   </div>
-
-  <!-- ══ MOBILE CONTENT ════════════════════════════════════ -->
-  <div class="mobile-content" id="m-content">
-    <div id="m-tab-overview" class="panel active"><div id="m-overview-inner"></div></div>
-    <div id="m-tab-races"    class="panel"><div id="m-races-inner"></div></div>
-    <div id="m-tab-kelly"    class="panel"><div id="m-kelly-inner"></div></div>
-    <div id="m-tab-agents"   class="panel"><div id="m-agents-inner"></div></div>
+  <div class="m-content" id="m-content">
+    <div id="m-overview" class="panel active"></div>
+    <div id="m-races"    class="panel"></div>
+    <div id="m-kelly"    class="panel"></div>
+    <div id="m-agents"   class="panel"></div>
   </div>
-
-  <!-- ══ MOBILE BOTTOM NAV ════════════════════════════════= -->
-  <div class="bottom-nav">
-    <button class="bnav-btn active" onclick="switchTab('overview',this,'m')">
+  <div class="m-bnav">
+    <button class="m-nav-btn active" onclick="mt('overview',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       Overview
     </button>
-    <button class="bnav-btn" onclick="switchTab('races',this,'m')">
+    <button class="m-nav-btn" onclick="mt('races',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       Races
     </button>
-    <button class="bnav-btn" onclick="switchTab('kelly',this,'m')">
-      <span class="bnav-badge" id="m-kelly-badge" style="display:none">0</span>
+    <button class="m-nav-btn" onclick="mt('kelly',this)">
+      <span class="m-badge" id="m-kbadge" style="display:none">0</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
       Kelly
     </button>
-    <button class="bnav-btn" onclick="switchTab('agents',this,'m')">
+    <button class="m-nav-btn" onclick="mt('agents',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a4 4 0 014 4v2a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M3 20c0-4 4-7 9-7s9 3 9 7"/></svg>
       Agents
     </button>
@@ -337,357 +293,221 @@ input[type=range]{flex:1;accent-color:var(--gold)}
 </div>
 
 <script>
-const API = '';
-let betHorses = new Set();
-let kellyFrac = 0.50;
-let activeTab = 'overview';
+const API='';
+let _races=null, _kelly=null, betHorses=new Set(), kellyFrac=0.50;
 
-/* ── API helpers ─────────────────────────────────────────── */
-async function apiFetch(p) {
-  try { const r=await fetch(API+p); if(!r.ok) throw Error(r.status); return await r.json(); }
-  catch(e){ console.error(p,e); return null; }
-}
-async function apiPost(p) {
-  try { const r=await fetch(API+p,{method:'POST'}); if(!r.ok) throw Error(r.status); return await r.json(); }
-  catch(e){ console.error(p,e); return null; }
-}
-
-/* ── API status ──────────────────────────────────────────── */
-function setApi(ok) {
-  ['d','m'].forEach(pfx => {
-    const p = document.getElementById(pfx+'-api-pill');
-    const t = document.getElementById(pfx+'-api-txt');
-    if (!p) return;
-    p.className = 'api-pill ' + (ok ? 'api-ok' : 'api-err');
-    t.textContent = ok ? 'Live' : 'Offline';
+/* helpers */
+async function get(p){try{const r=await fetch(API+p);if(!r.ok)throw Error(r.status);return await r.json();}catch(e){return null;}}
+async function post(p){try{const r=await fetch(API+p,{method:'POST'});if(!r.ok)throw Error(r.status);return await r.json();}catch(e){return null;}}
+const $=id=>document.getElementById(id);
+function setApi(ok){
+  ['d','m'].forEach(p=>{
+    const el=$(p+'-api'),tx=$(p+'-api-txt');if(!el)return;
+    el.className='api-pill '+(ok?'aok':'aerr');
+    tx.textContent=ok?'Live':'Offline';
   });
-  const dot = document.getElementById('d-sa-dot');
-  if (dot) dot.style.background = ok ? 'var(--green-light)' : 'var(--text3)';
+  const dot=$('d-sa-dot');if(dot)dot.style.background=ok?'var(--green-light)':'var(--text3)';
 }
 
-/* ── Tab switching ───────────────────────────────────────── */
-function switchTab(name, el, ctx) {
-  activeTab = name;
-
-  if (ctx === 'd' || ctx === 'dt') {
-    document.querySelectorAll('.desktop-main .panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-    const dp = document.getElementById('d-tab-'+name);
-    if (dp) dp.classList.add('active');
-    if (el.classList.contains('nav-item')) el.classList.add('active');
-    if (el.classList.contains('tab-btn')) el.classList.add('active');
-    document.getElementById('d-content')?.scrollTo(0,0);
-    renderTab(name, 'd');
-  }
-  if (ctx === 'm') {
-    document.querySelectorAll('.mobile-content .panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
-    const mp = document.getElementById('m-tab-'+name);
-    if (mp) mp.classList.add('active');
-    el.classList.add('active');
-    document.getElementById('m-content')?.scrollTo(0,0);
-    renderTab(name, 'm');
-  }
+/* edge badge */
+function eb(edge,bet){
+  const p=(edge*100).toFixed(1),s=edge>=0?'+':'';
+  if(bet) return`<span class="edge-badge eb">${s}${p}%</span>`;
+  if(edge>=0.035)return`<span class="edge-badge ep">${s}${p}%</span>`;
+  if(edge<0)return`<span class="edge-badge en">${p}%</span>`;
+  return`<span class="edge-badge ez">${s}${p}%</span>`;
 }
 
-/* ── Render tab content into a prefix ───────────────────── */
-function renderTab(name, pfx) {
-  if (name === 'overview') renderOverview(pfx);
-  if (name === 'races')    renderRaces(pfx);
-  if (name === 'kelly')    renderKelly(pfx);
-  if (name === 'agents')   renderAgents(pfx);
+/* build race card HTML */
+function raceCardHTML(r){
+  const race=r.race;
+  const rows=r.horses.map(h=>{
+    if(h.scratched)return`<div class="horse-row scr"><div class="pp-c">${h.post_position}</div><div class="h-main"><div class="h-name-row"><span class="h-nm" style="text-decoration:line-through">${h.horse_name}</span></div><div class="h-jt">SCRATCHED</div></div></div>`;
+    const hasBet=betHorses.has(h.horse_name);
+    const mp=h.model_win_prob||0,edge=h.edge||0,bet=h.kelly_bet_amount||0;
+    const odds=h.live_odds||h.morning_line_odds||'—';
+    let tp=0;if(odds.includes('/')){const[n,d]=odds.split('/').map(Number);tp=d/(n+d);}
+    const bc=hasBet?'mb':'m';
+    return`<div class="horse-row ${hasBet?'bet-row':''}">
+      <div class="pp-c ${hasBet?'bet':''}">${h.post_position}</div>
+      <div class="h-main">
+        <div class="h-name-row"><span class="h-nm">${h.horse_name}</span>${hasBet?'<span class="bet-pill">● Bet</span>':''}</div>
+        <div class="h-jt">${h.jockey||'—'} / ${h.trainer||'—'}</div>
+        ${mp>0?`<div class="prob-row"><div class="pbar"><div class="pfill ${bc}" style="width:${(mp*100).toFixed(0)}%"></div></div><div class="pbar"><div class="pfill t" style="width:${(tp*100).toFixed(0)}%"></div></div><span class="pval">${(mp*100).toFixed(1)}%</span></div>`:''}
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums">${odds}</div>
+        ${eb(edge,hasBet)}
+        ${bet>0?`<div class="kv">$${Number(bet).toFixed(2)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  return`<div class="race-card"><div class="race-hd"><div class="race-num">${race.race_number}</div><div class="race-info-wrap"><div class="race-name">${race.race_name||'Race '+race.race_number}</div><div class="race-meta">${race.distance||''} ${race.surface||''} · ${race.track_condition||''}</div></div><div class="race-time">${race.post_time||''}</div></div>${rows}</div>`;
 }
 
-/* ── Edge badge ─────────────────────────────────────────── */
-function edgeBadge(edge, hasBet) {
-  const pct = (edge*100).toFixed(1), sign = edge>=0?'+':'';
-  if (hasBet)        return `<span class="edge-badge edge-bet">${sign}${pct}%</span>`;
-  if (edge >= 0.035) return `<span class="edge-badge edge-pos">${sign}${pct}%</span>`;
-  if (edge < 0)      return `<span class="edge-badge edge-neg">${pct}%</span>`;
-  return `<span class="edge-badge edge-zero">${sign}${pct}%</span>`;
-}
-
-/* ── Stat cards HTML ────────────────────────────────────── */
-function statCardsHTML() {
-  return `<div class="stat-row">
-    <div class="stat-card"><div class="stat-label">Today's Races</div><div class="stat-value" id="s-races-VAR">—</div><div class="stat-sub" id="s-races-sub-VAR">Loading</div></div>
-    <div class="stat-card green"><div class="stat-label">Total Horses</div><div class="stat-value" id="s-horses-VAR">—</div><div class="stat-sub up" id="s-horses-sub-VAR">—</div></div>
-    <div class="stat-card blue"><div class="stat-label">Kelly Bets</div><div class="stat-value" id="s-bets-VAR" style="color:var(--green-light)">—</div><div class="stat-sub" id="s-bets-sub-VAR">3.5% min edge</div></div>
-    <div class="stat-card"><div class="stat-label">Total Risk</div><div class="stat-value" id="s-risk-VAR" style="font-size:18px;color:var(--green-light)">—</div><div class="stat-sub">of $1,000</div></div>
+/* stat cards HTML */
+function statsHTML(pfx){
+  const sg=pfx==='d'?'d-stat-row':'m-stat-row';
+  return`<div class="${sg}">
+    <div class="stat-card"><div class="stat-label">Today's Races</div><div class="stat-value" id="${pfx}-sr">—</div><div class="stat-sub" id="${pfx}-srs">Loading</div></div>
+    <div class="stat-card green"><div class="stat-label">Total Horses</div><div class="stat-value" id="${pfx}-sh">—</div><div class="stat-sub up" id="${pfx}-shs">—</div></div>
+    <div class="stat-card blue"><div class="stat-label">Kelly Bets</div><div class="stat-value" id="${pfx}-sb" style="color:var(--green-light)">—</div><div class="stat-sub" id="${pfx}-sbs">3.5% min edge</div></div>
+    <div class="stat-card"><div class="stat-label">Total Risk</div><div class="stat-value" id="${pfx}-sk" style="font-size:18px;color:var(--green-light)">—</div><div class="stat-sub">of $1,000</div></div>
   </div>`;
 }
 
-/* ── Overview ───────────────────────────────────────────── */
-function renderOverview(pfx) {
-  const el = document.getElementById(pfx+'-overview-inner');
-  if (!el) return;
-  el.innerHTML = statCardsHTML().replace(/VAR/g, pfx) + `
-    <div class="section-hd">
-      <div class="section-title">Today's Race Card — Live Data</div>
-      <button class="btn" onclick="loadAll()">↺ Refresh</button>
-    </div>
-    <div id="${pfx}-races-container"><div class="empty"><span class="spinner"></span>Loading races...</div></div>`;
-  populateStats(pfx);
-  populateRaceCards(pfx+'-races-container');
+function fillStats(pfx){
+  const s=(id,v)=>{const e=$(pfx+'-'+id);if(e)e.textContent=v;};
+  if(_races){
+    const rc=_races.races||[],th=rc.reduce((s,r)=>s+r.horses.length,0);
+    s('sr',rc.length);s('srs',(_races.date||'')+' · SA');s('sh',th);
+    s('shs',rc.filter(r=>r.horses.some(h=>!h.scratched)).length+' active races');
+  }
+  if(_kelly){
+    const sm=_kelly.summary||{};
+    s('sb',sm.count||0);s('sbs','Avg edge: +'+(sm.avg_edge||0)+'%');
+    s('sk','$'+Number(sm.total_risk||0).toFixed(2));
+  }
 }
 
-/* ── Races tab ──────────────────────────────────────────── */
-function renderRaces(pfx) {
-  const el = document.getElementById(pfx+'-races-inner');
-  if (!el) return;
-  el.innerHTML = `<div class="section-hd">
-    <div class="section-title">Full Race Card — Santa Anita Park</div>
-    <button class="btn btn-sm" onclick="loadAll()">↺ Refresh</button>
-  </div>
-  <div id="${pfx}-full-races"><div class="empty"><span class="spinner"></span>Loading...</div></div>`;
-  populateRaceCards(pfx+'-full-races');
+function raceListHTML(){
+  if(!_races||!_races.races||!_races.races.length)return'<div class="empty">No race data. Use Agents → Run Scraper.</div>';
+  return _races.races.map(raceCardHTML).join('');
 }
 
-/* ── Kelly tab ──────────────────────────────────────────── */
-function renderKelly(pfx) {
-  const el = document.getElementById(pfx+'-kelly-inner');
-  if (!el) return;
-  const frac = Math.round(kellyFrac*100);
-  el.innerHTML = `<div class="kelly-hero">
-    <div class="kelly-stats-grid" style="display:grid;gap:12px;margin-bottom:14px">
-      <div><div class="k-stat-label">Bankroll</div><div class="k-stat-val" style="color:var(--gold)">$1,000</div></div>
-      <div><div class="k-stat-label">Kelly</div><div class="k-stat-val" id="${pfx}-k-frac">${frac}%</div></div>
-      <div><div class="k-stat-label">Min Edge</div><div class="k-stat-val">3.5%</div></div>
-      <div><div class="k-stat-label">Total Risk</div><div class="k-stat-val" style="color:var(--green-light)" id="${pfx}-k-risk">—</div></div>
+function kellyHTML(pfx){
+  const kg=pfx==='d'?'d-kelly-grid':'m-kelly-grid';
+  const frac=Math.round(kellyFrac*100);
+  const risk=_kelly?'$'+Number(_kelly.summary?.total_risk||0).toFixed(2):'—';
+  const bets=!_kelly||!_kelly.bets||!_kelly.bets.length
+    ?'<div class="empty">No Kelly bets above 3.5% edge today.</div>'
+    :_kelly.bets.map(b=>`<div class="kbet-card"><div class="kbet-top"><div><div class="kbet-horse">${b.horse_name} <span class="conf-badge c${b.confidence[0]}">${b.confidence}</span></div><div class="kbet-sub">Race ${b.race_number} · ${b.odds} · ${b.post_time||''}</div></div><div class="kbet-amount">$${Number(b.bet_amount).toFixed(2)}</div></div><div class="kbet-row"><div class="kbet-stat">Model <span>${(b.model_prob*100).toFixed(1)}%</span></div><div class="kbet-stat">Track <span>${(b.track_prob*100).toFixed(1)}%</span></div><div class="kbet-stat">Edge <span style="color:var(--green-light)">${(b.edge*100).toFixed(1)}%</span></div><div class="kbet-stat">Kelly <span>${(b.kelly_frac*100).toFixed(1)}%</span></div></div></div>`).join('');
+  return`<div class="kelly-hero">
+    <div class="${kg}">
+      <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bankroll</div><div style="font-size:20px;font-weight:600;color:var(--gold)">$1,000</div></div>
+      <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Kelly</div><div style="font-size:20px;font-weight:600" id="${pfx}-kf">${frac}%</div></div>
+      <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Min Edge</div><div style="font-size:20px;font-weight:600">3.5%</div></div>
+      <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Total Risk</div><div style="font-size:20px;font-weight:600;color:var(--green-light)" id="${pfx}-kr">${risk}</div></div>
     </div>
-    <div class="slider-row">
-      <span class="slider-label">Kelly %</span>
-      <input type="range" id="${pfx}-k-slider" min="10" max="100" value="${frac}" step="5" oninput="updateKelly(this.value,'${pfx}')">
-      <span class="slider-out" id="${pfx}-k-slider-out">${frac}%</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px;color:var(--text2);white-space:nowrap">Kelly %</span>
+      <input type="range" id="${pfx}-ks" min="10" max="100" value="${frac}" step="5" oninput="updKelly(this.value,'${pfx}')">
+      <span style="font-size:14px;font-weight:600;color:var(--gold);min-width:36px;text-align:right" id="${pfx}-kso">${frac}%</span>
     </div>
-  </div>
-  <div id="${pfx}-kelly-bets"><div class="empty"><span class="spinner"></span>Loading bets...</div></div>`;
-  populateKellyBets(pfx);
+  </div>${bets}`;
 }
 
-/* ── Agents tab ─────────────────────────────────────────── */
-function renderAgents(pfx) {
-  const el = document.getElementById(pfx+'-agents-inner');
-  if (!el) return;
-  el.innerHTML = `<div class="section-hd">
-    <div class="section-title">AI Agents — Live Pipeline</div>
-    <button class="btn btn-green" onclick="runScraper('${pfx}')">▶ Run Scraper</button>
-  </div>
+async function agentsHTML(pfx){
+  const data=await get('/api/scraper/status');
+  const last=data?.recent_runs?.[0];
+  const lastTime=last?new Date(last.at).toLocaleTimeString():'—';
+  const races=_races?.races?.length||'—';
+  const horses=_races?.races?.reduce((s,r)=>s+r.horses.length,0)||'—';
+  const logs=data?.recent_runs?.map(r=>`<div class="${r.status==='success'?'lok':'le'}">[${new Date(r.at).toLocaleTimeString()}] ${r.status==='success'?'✓':'✗'} ${r.source} — ${r.message}</div>`).join('')||'<div class="lw">No runs yet.</div>';
+  return`<div class="section-hd"><div class="section-title">AI Agents — Live Pipeline</div><button class="btn btn-green" onclick="runScraper('${pfx}')">▶ Run Scraper</button></div>
   <div class="agent-card">
-    <div class="agent-hd"><div class="agent-title">Equibase Feed</div><div class="status-ok">● Active</div></div>
-    <div class="agent-row"><span class="agent-key">Races today</span><span id="${pfx}-ag-races">—</span></div>
-    <div class="agent-row"><span class="agent-key">Total horses</span><span id="${pfx}-ag-horses">—</span></div>
-    <div class="agent-row"><span class="agent-key">Last scrape</span><span id="${pfx}-ag-last">—</span></div>
+    <div class="agent-hd"><div class="agent-title">Equibase Feed</div><div style="font-size:11px;padding:3px 8px;border-radius:4px;background:rgba(26,124,79,.15);color:var(--green-light)">● Active</div></div>
+    <div class="agent-row"><span class="agent-key">Races today</span><span>${races}</span></div>
+    <div class="agent-row"><span class="agent-key">Total horses</span><span>${horses}</span></div>
+    <div class="agent-row"><span class="agent-key">Last scrape</span><span>${lastTime}</span></div>
     <div class="agent-row"><span class="agent-key">Schedule</span><span>7:30 AM PT · Fri/Sat/Sun</span></div>
     <div class="agent-row"><span class="agent-key">Live odds</span><span>Every 3 min · 11AM–7PM PT</span></div>
     <div class="agent-row"><span class="agent-key">Results</span><span>Every 12 min · race hours</span></div>
   </div>
-  <div class="section-hd"><div class="section-title">Agent Log</div><button class="btn btn-sm" onclick="loadAgentLog('${pfx}')">↺</button></div>
-  <div class="log-box" id="${pfx}-log-box"><div class="log-info">Connecting...</div></div>`;
-  loadAgentLog(pfx);
+  <div class="section-hd"><div class="section-title">Agent Log</div><button class="btn btn-sm" onclick="renderTab('agents','${pfx}')">↺</button></div>
+  <div class="log-box" id="${pfx}-logbox">${logs}</div>`;
 }
 
-/* ── Data population ────────────────────────────────────── */
-let _races = null;
-let _kelly = null;
-
-function populateStats(pfx) {
-  if (_races) applyStats(pfx, _races);
-  if (_kelly) applyKellyStats(pfx, _kelly);
-}
-
-function applyStats(pfx, data) {
-  const races = data.races || [];
-  const totalH = races.reduce((s,r)=>s+r.horses.length,0);
-  const set = (id, val) => { const el=document.getElementById(id+'-'+pfx); if(el) el.textContent=val; };
-  set('s-races', races.length);
-  set('s-races-sub', (data.date||'')+'· SA');
-  set('s-horses', totalH);
-  set('s-horses-sub', races.filter(r=>r.horses.some(h=>!h.scratched)).length+' active races');
-}
-
-function applyKellyStats(pfx, data) {
-  const set = (id, val) => { const el=document.getElementById(id+'-'+pfx); if(el) el.textContent=val; };
-  const risk = '$'+Number(data.summary?.total_risk||0).toFixed(2);
-  set('s-bets', data.summary?.count||0);
-  set('s-bets-sub', 'Avg edge: +'+(data.summary?.avg_edge||0)+'%');
-  set('s-risk', risk);
-}
-
-function populateRaceCards(containerId) {
-  const el = document.getElementById(containerId);
-  if (!el) return;
-  if (!_races || !_races.races || !_races.races.length) {
-    el.innerHTML = '<div class="empty">No race data. Use Agents → Run Scraper.</div>'; return;
-  }
-  el.innerHTML = _races.races.map(r => buildRaceCard(r)).join('');
-}
-
-function buildRaceCard(r) {
-  const race = r.race;
-  const rows = r.horses.map(h => {
-    if (h.scratched) return `<div class="horse-row scr">
-      <div class="pp-circle">${h.post_position}</div>
-      <div class="horse-main"><div class="horse-name-row"><span class="horse-nm" style="text-decoration:line-through">${h.horse_name}</span></div><div class="horse-jt">SCRATCHED</div></div>
-    </div>`;
-    const hasBet = betHorses.has(h.horse_name);
-    const modelP = h.model_win_prob||0, edge=h.edge||0, bet=h.kelly_bet_amount||0;
-    const odds = h.live_odds||h.morning_line_odds||'—';
-    let trackP=0; if(odds.includes('/')){ const [n,d]=odds.split('/').map(Number); trackP=d/(n+d); }
-    const barCls = hasBet?'model-bet':'model';
-    return `<div class="horse-row ${hasBet?'bet-row':''}">
-      <div class="pp-circle ${hasBet?'bet':''}">${h.post_position}</div>
-      <div class="horse-main">
-        <div class="horse-name-row"><span class="horse-nm">${h.horse_name}</span>${hasBet?'<span class="bet-pill">● Bet</span>':''}</div>
-        <div class="horse-jt">${h.jockey||'—'} / ${h.trainer||'—'}</div>
-        ${modelP>0?`<div class="prob-row">
-          <div class="prob-bar"><div class="prob-fill ${barCls}" style="width:${(modelP*100).toFixed(0)}%"></div></div>
-          <div class="prob-bar"><div class="prob-fill track" style="width:${(trackP*100).toFixed(0)}%"></div></div>
-          <span class="prob-val">${(modelP*100).toFixed(1)}%</span>
-        </div>`:''}
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums">${odds}</div>
-        ${edgeBadge(edge,hasBet)}
-        ${bet>0?`<div class="kelly-val">$${Number(bet).toFixed(2)}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-  return `<div class="race-card">
-    <div class="race-hd">
-      <div class="race-num">${race.race_number}</div>
-      <div class="race-meta-wrap">
-        <div class="race-name">${race.race_name||'Race '+race.race_number}</div>
-        <div class="race-meta">${race.distance||''} ${race.surface||''} · ${race.track_condition||''}</div>
-      </div>
-      <div class="race-time">${race.post_time||''}</div>
-    </div>
-    ${rows}
-  </div>`;
-}
-
-function populateKellyBets(pfx) {
-  const el = document.getElementById(pfx+'-kelly-bets');
-  const riskEl = document.getElementById(pfx+'-k-risk');
-  if (!el) return;
-  if (!_kelly || !_kelly.bets || !_kelly.bets.length) {
-    el.innerHTML='<div class="empty">No Kelly bets above 3.5% edge today.</div>';
-    if(riskEl) riskEl.textContent='$0'; return;
-  }
-  if(riskEl) riskEl.textContent='$'+Number(_kelly.summary.total_risk).toFixed(2);
-  el.innerHTML = _kelly.bets.map(b=>`<div class="kbet-card">
-    <div class="kbet-top">
-      <div>
-        <div class="kbet-horse">${b.horse_name} <span class="conf-badge conf-${b.confidence}">${b.confidence}</span></div>
-        <div class="kbet-sub">Race ${b.race_number} · ${b.odds} · ${b.post_time||''}</div>
-      </div>
-      <div class="kbet-amount">$${Number(b.bet_amount).toFixed(2)}</div>
-    </div>
-    <div class="kbet-row">
-      <div class="kbet-stat">Model <span>${(b.model_prob*100).toFixed(1)}%</span></div>
-      <div class="kbet-stat">Track <span>${(b.track_prob*100).toFixed(1)}%</span></div>
-      <div class="kbet-stat">Edge <span style="color:var(--green-light)">${(b.edge*100).toFixed(1)}%</span></div>
-      <div class="kbet-stat">Kelly <span>${(b.kelly_frac*100).toFixed(1)}%</span></div>
-    </div>
-  </div>`).join('');
-}
-
-async function loadAgentLog(pfx) {
-  const data = await apiFetch('/api/scraper/status');
-  const log = document.getElementById(pfx+'-log-box');
-  if (!data||!data.recent_runs||!data.recent_runs.length) {
-    if(log) log.innerHTML='<div class="log-warn">No scraper runs yet.</div>'; return;
-  }
-  const latest=data.recent_runs[0];
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
-  set(pfx+'-ag-last', new Date(latest.at).toLocaleTimeString());
-  if (_races) { set(pfx+'-ag-races',_races.races?.length||'—'); set(pfx+'-ag-horses',_races.races?.reduce((s,r)=>s+r.horses.length,0)||'—'); }
-  if(log) {
-    log.innerHTML=data.recent_runs.map(r=>`<div class="${r.status==='success'?'log-ok':'log-err'}">[${new Date(r.at).toLocaleTimeString()}] ${r.status==='success'?'✓':'✗'} ${r.source} — ${r.message}</div>`).join('');
-    log.scrollTop=log.scrollHeight;
+/* render a tab into a prefix */
+async function renderTab(tab, pfx){
+  const el=$(pfx+'-'+tab); if(!el) return;
+  if(tab==='overview'){
+    el.innerHTML=statsHTML(pfx)+`<div class="section-hd"><div class="section-title">Today's Race Card — Live Data</div><button class="btn" onclick="loadAll()">↺ Refresh</button></div>`+raceListHTML();
+    fillStats(pfx);
+  } else if(tab==='races'){
+    el.innerHTML=`<div class="section-hd"><div class="section-title">Full Race Card — Santa Anita Park</div><button class="btn btn-sm" onclick="loadAll()">↺ Refresh</button></div>`+raceListHTML();
+  } else if(tab==='kelly'){
+    el.innerHTML=kellyHTML(pfx);
+  } else if(tab==='agents'){
+    el.innerHTML=`<div class="empty"><span class="spinner"></span>Loading...</div>`;
+    el.innerHTML=await agentsHTML(pfx);
   }
 }
 
-function addLog(pfx, cls, msg) {
-  const log=document.getElementById(pfx+'-log-box'); if(!log) return;
-  const d=document.createElement('div'); d.className=cls;
-  d.textContent=`[${new Date().toLocaleTimeString()}] ${msg}`;
-  log.appendChild(d); log.scrollTop=log.scrollHeight;
+/* desktop tab switch */
+function dt(tab, el){
+  document.querySelectorAll('#d-content .panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.d-nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.d-tab').forEach(t=>t.classList.remove('active'));
+  $('d-'+tab)?.classList.add('active');
+  if(el.classList.contains('d-nav-item'))el.classList.add('active');
+  if(el.classList.contains('d-tab'))el.classList.add('active');
+  $('d-content')?.scrollTo(0,0);
+  renderTab(tab,'d');
 }
 
-async function runScraper(pfx) {
-  const btn=event.target; btn.disabled=true; btn.textContent='⏳ Running...';
-  addLog(pfx,'log-info','Scrape triggered...');
-  const r=await apiPost('/api/scraper/run');
-  if(r?.status==='started') {
-    addLog(pfx,'log-ok','✓ Started — refreshing in 10s...');
-    setTimeout(async()=>{ await loadAll(); btn.disabled=false; btn.textContent='▶ Run Scraper'; },10000);
-  } else { addLog(pfx,'log-err','✗ Failed'); btn.disabled=false; btn.textContent='▶ Run Scraper'; }
+/* mobile tab switch */
+function mt(tab, el){
+  document.querySelectorAll('#m-content .panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.m-nav-btn').forEach(b=>b.classList.remove('active'));
+  $('m-'+tab)?.classList.add('active');
+  el.classList.add('active');
+  $('m-content')?.scrollTo(0,0);
+  renderTab(tab,'m');
 }
 
-/* ── Kelly slider ───────────────────────────────────────── */
-function updateKelly(val, pfx) {
-  kellyFrac = val/100;
-  const fracEl=document.getElementById(pfx+'-k-frac'); if(fracEl) fracEl.textContent=val+'%';
-  const outEl=document.getElementById(pfx+'-k-slider-out'); if(outEl) outEl.textContent=val+'%';
-  loadKellyData().then(()=>populateKellyBets(pfx));
+function updKelly(val, pfx){
+  kellyFrac=val/100;
+  const kf=$(pfx+'-kf');if(kf)kf.textContent=val+'%';
+  const kso=$(pfx+'-kso');if(kso)kso.textContent=val+'%';
+  get(`/api/kelly/bets/today?kelly_fraction=${kellyFrac}&min_edge=0.035`).then(d=>{
+    if(d){_kelly=d;betHorses=new Set((d.bets||[]).map(b=>b.horse_name));}
+    const kr=$(pfx+'-kr');if(kr)kr.textContent='$'+Number(_kelly?.summary?.total_risk||0).toFixed(2);
+    renderTab('kelly',pfx);
+  });
 }
 
-/* ── Main data loaders ──────────────────────────────────── */
-async function loadAll() {
-  const [health, raceData, kellyData] = await Promise.all([
-    apiFetch('/api/health'),
-    apiFetch('/api/races/today'),
-    apiFetch(`/api/kelly/bets/today?kelly_fraction=${kellyFrac}&min_edge=0.035`),
+async function runScraper(pfx){
+  const btn=event.target;btn.disabled=true;btn.textContent='⏳ Running...';
+  const lb=$(pfx+'-logbox');if(lb){const d=document.createElement('div');d.className='li';d.textContent=`[${new Date().toLocaleTimeString()}] Scrape triggered...`;lb.appendChild(d);}
+  const r=await post('/api/scraper/run');
+  if(r?.status==='started'){
+    setTimeout(async()=>{await loadAll();btn.disabled=false;btn.textContent='▶ Run Scraper';},10000);
+  } else {btn.disabled=false;btn.textContent='▶ Run Scraper';}
+}
+
+async function loadAll(){
+  const[health,raceData,kellyData]=await Promise.all([
+    get('/api/health'),
+    get('/api/races/today'),
+    get(`/api/kelly/bets/today?kelly_fraction=${kellyFrac}&min_edge=0.035`),
   ]);
-
   setApi(!!health);
-
-  if (raceData) {
-    _races = raceData;
-    ['d','m'].forEach(pfx => {
-      applyStats(pfx, raceData);
-      const oc=document.getElementById(pfx+'-races-container'); if(oc) populateRaceCards(pfx+'-races-container');
-      const fc=document.getElementById(pfx+'-full-races'); if(fc) populateRaceCards(pfx+'-full-races');
-      const ai=document.getElementById(pfx+'-ag-races'); if(ai) ai.textContent=raceData.races?.length||'—';
-      const ah=document.getElementById(pfx+'-ag-horses'); if(ah) ah.textContent=raceData.races?.reduce((s,r)=>s+r.horses.length,0)||'—';
-    });
+  if(raceData) _races=raceData;
+  if(kellyData){
+    _kelly=kellyData;
+    betHorses=new Set((kellyData.bets||[]).map(b=>b.horse_name));
+    const cnt=kellyData.summary?.count||0;
+    ['d-kbadge','m-kbadge'].forEach(id=>{const e=$(id);if(e){e.textContent=cnt;e.style.display=cnt>0?'block':'none';}});
   }
-
-  if (kellyData) {
-    _kelly = kellyData;
-    betHorses = new Set((kellyData.bets||[]).map(b=>b.horse_name));
-    const cnt = kellyData.summary?.count||0;
-    ['d','m'].forEach(pfx => {
-      applyKellyStats(pfx, kellyData);
-      const kb=document.getElementById(pfx==='d'?'d-kelly-badge':'m-kelly-badge');
-      if(kb){ kb.textContent=cnt; kb.style.display=cnt>0?'block':'none'; }
-      const el=document.getElementById(pfx+'-kelly-bets'); if(el) populateKellyBets(pfx);
-      const oc=document.getElementById(pfx+'-races-container'); if(oc) populateRaceCards(pfx+'-races-container');
-      const fc=document.getElementById(pfx+'-full-races'); if(fc) populateRaceCards(pfx+'-full-races');
-    });
-  }
+  /* re-render whichever tab is currently active on each shell */
+  ['d','m'].forEach(pfx=>{
+    const active=document.querySelector(`#${pfx}-content .panel.active`);
+    if(!active) return;
+    const tab=active.id.replace(pfx+'-','');
+    renderTab(tab,pfx);
+  });
 }
 
-async function loadKellyData() {
-  const d = await apiFetch(`/api/kelly/bets/today?kelly_fraction=${kellyFrac}&min_edge=0.035`);
-  if(d){ _kelly=d; betHorses=new Set((d.bets||[]).map(b=>b.horse_name)); }
+function updateClock(){
+  const el=$('d-clock');if(!el)return;
+  el.textContent=new Date().toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'America/Los_Angeles'})+' PT';
 }
 
-/* ── Clock ──────────────────────────────────────────────── */
-function updateClock() {
-  const s=new Date().toLocaleString('en-US',{weekday:'short',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'America/Los_Angeles'})+' PT';
-  const el=document.getElementById('d-clock'); if(el) el.textContent=s;
-}
-
-/* ── Init ───────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  // Render initial tabs
-  renderOverview('d'); renderOverview('m');
-  updateClock(); setInterval(updateClock,1000);
+document.addEventListener('DOMContentLoaded',()=>{
+  updateClock();setInterval(updateClock,1000);
   loadAll();
-  setInterval(loadAll, 3*60*1000);
+  setInterval(loadAll,3*60*1000);
 });
 </script>
 </body>
