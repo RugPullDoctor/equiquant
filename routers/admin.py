@@ -97,7 +97,8 @@ async def _run_fresh_reload():
 
         init_db()
         db = SessionLocal()
-        today = date.today()
+        import pytz, datetime
+        today = datetime.datetime.now(pytz.timezone("America/Los_Angeles")).date()
         mm = str(today.month).zfill(2)
         dd = str(today.day).zfill(2)
         url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{today.year}USA-EQB.html"
