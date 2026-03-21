@@ -1,7 +1,7 @@
 """
 EquiQuant — Startup Data Loader
-Fetches today's race card from Equibase using correct URL format:
-SA{MM}{DD}{YYYY}USA-EQB.html  e.g. SA03212026USA-EQB.html
+Fetches today's race card from Equibase.
+Correct URL format: SA{MM}{DD}{YYYY}USA-EQB.html
 """
 import logging, numpy as np, re, aiohttp
 from bs4 import BeautifulSoup
@@ -16,7 +16,7 @@ JOCKEY_WIN = {
     "t j pereira":0.17,"a fresu":0.16,"v espinoza":0.15,"h i berrios":0.14,
     "c belmont":0.12,"a escobedo":0.11,"r gonzalez":0.10,"f monroy":0.09,
     "c herrera":0.09,"w r orantes":0.08,"a lezcano":0.08,"a aguilar":0.07,
-    "v del cid":0.09,"a l bautista":0.08,
+    "v del cid":0.09,"a l bautista":0.08,"m e smith":0.09,"t baze":0.18,
 }
 TRAINER_WIN = {
     "b baffert":0.32,"p d'amato":0.28,"m w mccarthy":0.26,"p eurton":0.23,
@@ -27,6 +27,7 @@ TRAINER_WIN = {
     "j ramos":0.08,"l barocio":0.07,"a mathis":0.07,"j j sierra":0.07,
     "g l lopez":0.06,"e g alvarez":0.06,"b mclean":0.06,"j bonde":0.06,
     "m puype":0.05,"g haley":0.08,"s miyadi":0.07,"t yakteen":0.20,
+    "n d drysdale":0.14,"n drysdale":0.14,
 }
 PP_SPRINT=[0.165,0.158,0.148,0.136,0.121,0.106,0.088,0.072,0.058,0.046,0.037,0.028]
 PP_ROUTE =[0.118,0.128,0.135,0.138,0.130,0.118,0.102,0.088,0.076,0.064,0.052,0.040]
@@ -66,30 +67,12 @@ def clean(s): return re.sub(r'\s+',' ',str(s or "")).strip()
 
 
 def get_today_pt():
-    """Get today's date in Pacific Time."""
     PT = pytz.timezone("America/Los_Angeles")
     import datetime
     return datetime.datetime.now(PT).date()
 
 
-def make_urls(d):
-    """
-    Build Equibase URLs for a given date.
-    Correct format: SA{MM}{DD}{YYYY}USA-EQB.html
-    e.g. March 21 2026 = SA03212026USA-EQB.html
-    """
-    mm = str(d.month).zfill(2)
-    dd = str(d.day).zfill(2)
-    yyyy = d.year
-    return [
-        f"https://www.equibase.com/static/entry/SA{mm}{dd}{yyyy}USA-EQB.html",
-        # fallback: month+year format (some older pages use this)
-        f"https://www.equibase.com/static/entry/SA{mm}{yyyy}USA-EQB.html",
-    ]
-
-
 async def startup_load():
-    """Called on app startup — always fetches fresh Equibase data."""
     logger.info("Startup: fetching fresh Equibase data...")
     await _fetch_and_seed()
 
@@ -104,53 +87,42 @@ async def _fetch_and_seed():
         "Referer": "https://www.equibase.com/",
     }
 
-    html = None
-    used_url = None
-    race_date = None
-
-    # Try today and next 2 days in PT timezone
     today_pt = get_today_pt()
-    candidates = [today_pt + timedelta(days=i) for i in range(3)]
+    mm = str(today_pt.month).zfill(2)
+    dd = str(today_pt.day).zfill(2)
+    yyyy = today_pt.year
+    url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{yyyy}USA-EQB.html"
+    race_date = today_pt.isoformat()
 
-    for d in candidates:
-        for url in make_urls(d):
-            try:
-                logger.info(f"Startup: trying {url}")
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(url, headers=hdrs, timeout=aiohttp.ClientTimeout(total=15)) as resp:
-                        if resp.status != 200:
-                            logger.info(f"Startup: {url} → HTTP {resp.status}")
-                            continue
-                        text = await resp.text()
-                        soup_test = BeautifulSoup(text, "html.parser")
-                        tables = soup_test.find_all("table")
-                        valid = [t for t in tables if "Horse" in t.get_text() and "Jockey" in t.get_text()]
-                        if valid:
-                            html = text
-                            used_url = url
-                            race_date = d.isoformat()
-                            logger.info(f"Startup: ✓ found {len(valid)} entry tables at {url}")
-                            break
-                        else:
-                            logger.info(f"Startup: {url} → no entry tables found")
-            except Exception as e:
-                logger.warning(f"Startup: error fetching {url}: {e}")
-        if html:
-            break
+    logger.info(f"Startup: fetching {url} for {race_date}")
 
-    if not html:
-        logger.error("Startup: could not find valid Equibase page for any candidate date")
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=hdrs, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                if resp.status != 200:
+                    logger.error(f"Startup: Equibase returned {resp.status}")
+                    db.close()
+                    return
+                html = await resp.text()
+    except Exception as e:
+        logger.error(f"Startup: fetch error: {e}")
         db.close()
         return
 
     soup = BeautifulSoup(html, "html.parser")
     tables = soup.find_all("table")
+    valid = [t for t in tables if "Horse" in t.get_text() and "Jockey" in t.get_text()]
+    logger.info(f"Startup: {len(valid)} entry tables found")
+
+    if not valid:
+        logger.error(f"Startup: no entry tables at {url}")
+        db.close()
+        return
 
     # Clear all existing data
     db.query(Horse).delete()
     db.query(Race).delete()
     db.commit()
-    logger.info(f"Startup: cleared existing data, seeding {race_date}")
 
     races_saved = 0
     total_horses = 0
@@ -187,7 +159,8 @@ async def _fetch_and_seed():
             except: wt = 122
             try: pp = int(re.sub(r'\D','', pp_s) or len(entries)+1)
             except: pp = len(entries)+1
-            entries.append({"pp":pp,"horse":hn,"jockey":jk,"trainer":tr,"ml":ml,"wt":wt,"scr":scr})
+            entries.append({"pp":pp,"horse":hn,"jockey":jk,"trainer":tr,
+                            "ml":ml,"wt":wt,"scr":scr})
 
         if not entries: continue
 
@@ -241,18 +214,3 @@ async def _fetch_and_seed():
         ).order_by(Horse.post_position).all()
         if not horses: continue
         sc = [4.50*ppb(h.post_position,race.surface,race.distance)+2.80*(h.jockey_win_pct_90d or 0.08)+2.60*(h.trainer_win_pct_90d or 0.07)+0.08*(h.beyer_last or 85)+1.50*jt(h.jockey,h.trainer) for h in horses]
-        mx = max(sc); ex = [np.exp(s-mx) for s in sc]; pr = [e/sum(ex) for e in ex]
-        for h,p in zip(horses,pr):
-            o=h.morning_line_odds or "9/2"; e=p-op(o)
-            d=od(o); b=d-1.0; kf=max(0,(b*p-(1-p))/b) if b>0 else 0
-            bt=round(kf*KELLY_FRAC*BANKROLL,2) if e>=0.035 else 0
-            h.model_win_prob=round(p,4); h.edge=round(e,4)
-            h.kelly_fraction=round(kf*KELLY_FRAC,4); h.kelly_bet_amount=bt
-    db.commit()
-
-    log = ScraperLog(
-        source="startup_equibase", status="success", records=total_horses,
-        message=f"{races_saved} races, {total_horses} horses — {race_date} — {used_url}"
-    )
-    db.add(log); db.commit(); db.close()
-    logger.info(f"Startup done: {races_saved} races, {total_horses} horses for {race_date}")
