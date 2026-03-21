@@ -99,7 +99,8 @@ async def _run_fresh_reload():
         db = SessionLocal()
         today = date.today()
         mm = str(today.month).zfill(2)
-        url = f"https://www.equibase.com/static/entry/SA{mm}{today.year}USA-EQB.html"
+        dd = str(today.day).zfill(2)
+        url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{today.year}USA-EQB.html"
         race_date = today.isoformat()
 
         logger.info(f"Admin reload: fetching {url}")
