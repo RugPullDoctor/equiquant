@@ -71,7 +71,7 @@ async def startup_load():
     db = SessionLocal()
     today = date.today()
     mm = str(today.month).zfill(2)
-    url = f"https://www.equibase.com/static/entry/SA{mm}{today.year}USA-EQB.html"
+    url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{today.year}USA-EQB.html"
     race_date = today.isoformat()
     hdrs = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36","Referer":"https://www.equibase.com/"}
 
