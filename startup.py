@@ -1,12 +1,11 @@
 """
 EquiQuant — Startup Data Loader
-Fetches today's race card from Equibase.
-Correct URL format: SA{MM}{DD}{YYYY}USA-EQB.html
+Correct URL format: SA{MM}{DD}{YY}USA-EQB.html
+e.g. March 22 2026 = SA032226USA-EQB.html
 """
 import logging, numpy as np, re, aiohttp
 from bs4 import BeautifulSoup
-from datetime import date, timedelta
-import pytz
+from datetime import timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,7 @@ JOCKEY_WIN = {
     "t j pereira":0.17,"a fresu":0.16,"v espinoza":0.15,"h i berrios":0.14,
     "c belmont":0.12,"a escobedo":0.11,"r gonzalez":0.10,"f monroy":0.09,
     "c herrera":0.09,"w r orantes":0.08,"a lezcano":0.08,"a aguilar":0.07,
-    "v del cid":0.09,"a l bautista":0.08,"m e smith":0.09,"t baze":0.18,
+    "v del cid":0.09,"a l bautista":0.08,"m e smith":0.09,
 }
 TRAINER_WIN = {
     "b baffert":0.32,"p d'amato":0.28,"m w mccarthy":0.26,"p eurton":0.23,
@@ -66,41 +65,39 @@ def jt(j,t):
 def clean(s): return re.sub(r'\s+',' ',str(s or "")).strip()
 
 
-def get_today_pt():
-    PT = pytz.timezone("America/Los_Angeles")
-    import datetime
-    return datetime.datetime.now(PT).date()
-
-
 async def startup_load():
     logger.info("Startup: fetching fresh Equibase data...")
     await _fetch_and_seed()
 
 
 async def _fetch_and_seed():
+    import pytz, datetime
     from database import SessionLocal, Race, Horse, ScraperLog, init_db
+
     init_db()
     db = SessionLocal()
+
+    # Always use PT timezone
+    PT = pytz.timezone("America/Los_Angeles")
+    today = datetime.datetime.now(PT).date()
+    mm = str(today.month).zfill(2)
+    dd = str(today.day).zfill(2)
+    yy = str(today.year)[-2:]
+    url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{yy}USA-EQB.html"
+    race_date = today.isoformat()
+
+    logger.info(f"Startup: fetching {url} for {race_date}")
 
     hdrs = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Referer": "https://www.equibase.com/",
     }
 
-    today_pt = get_today_pt()
-    mm = str(today_pt.month).zfill(2)
-    dd = str(today_pt.day).zfill(2)
-    yy = str(today.year)[-2:]
-    url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{yy}USA-EQB.html"
-    race_date = today_pt.isoformat()
-
-    logger.info(f"Startup: fetching {url} for {race_date}")
-
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=hdrs, timeout=aiohttp.ClientTimeout(total=15)) as resp:
                 if resp.status != 200:
-                    logger.error(f"Startup: Equibase returned {resp.status}")
+                    logger.error(f"Startup: Equibase returned {resp.status} for {url}")
                     db.close()
                     return
                 html = await resp.text()
@@ -204,7 +201,8 @@ async def _fetch_and_seed():
 
     if races_saved == 0:
         logger.error("Startup: 0 races parsed!")
-        db.close(); return
+        db.close()
+        return
 
     # Run Benter model
     BANKROLL=1000.0; KELLY_FRAC=0.50
@@ -214,3 +212,18 @@ async def _fetch_and_seed():
         ).order_by(Horse.post_position).all()
         if not horses: continue
         sc = [4.50*ppb(h.post_position,race.surface,race.distance)+2.80*(h.jockey_win_pct_90d or 0.08)+2.60*(h.trainer_win_pct_90d or 0.07)+0.08*(h.beyer_last or 85)+1.50*jt(h.jockey,h.trainer) for h in horses]
+        mx=max(sc); ex=[np.exp(s-mx) for s in sc]; pr=[e/sum(ex) for e in ex]
+        for h,p in zip(horses,pr):
+            o=h.morning_line_odds or "9/2"; e=p-op(o)
+            d=od(o); b=d-1.0; kf=max(0,(b*p-(1-p))/b) if b>0 else 0
+            bt=round(kf*KELLY_FRAC*BANKROLL,2) if e>=0.035 else 0
+            h.model_win_prob=round(p,4); h.edge=round(e,4)
+            h.kelly_fraction=round(kf*KELLY_FRAC,4); h.kelly_bet_amount=bt
+    db.commit()
+
+    log = ScraperLog(
+        source="startup_equibase", status="success", records=total_horses,
+        message=f"{races_saved} races, {total_horses} horses — {race_date} — {url}"
+    )
+    db.add(log); db.commit(); db.close()
+    logger.info(f"Startup done: {races_saved} races, {total_horses} horses for {race_date}")
