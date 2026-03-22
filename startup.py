@@ -90,8 +90,8 @@ async def _fetch_and_seed():
     today_pt = get_today_pt()
     mm = str(today_pt.month).zfill(2)
     dd = str(today_pt.day).zfill(2)
-    yyyy = today_pt.year
-    url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{yyyy}USA-EQB.html"
+    yy = str(today.year)[-2:]
+    url = f"https://www.equibase.com/static/entry/SA{mm}{dd}{yy}USA-EQB.html"
     race_date = today_pt.isoformat()
 
     logger.info(f"Startup: fetching {url} for {race_date}")
